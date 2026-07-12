@@ -1,0 +1,17 @@
+rule mimikatz_execution_detected {
+
+  meta:
+    author = "Fabiano Rodrigues Santana"
+    description = "Detecta execução do Mimikatz via linha de comando do processo (Sysmon Event Code 1)"
+    severity = "High"
+    priority = "High"
+    mitre_attack_tactic = "Credential Access"
+    mitre_attack_technique = "T1003"
+
+  events:
+    $process.metadata.event_type = "PROCESS_LAUNCH"
+    $process.target.process.command_line = /mimikatz/ nocase
+
+  condition:
+    $process
+}

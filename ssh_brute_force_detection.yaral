@@ -1,0 +1,21 @@
+rule ssh_brute_force_detection {
+
+  meta:
+    author = "Fabiano Rodrigues Santana"
+    description = "Detecta múltiplas falhas de autenticação SSH do mesmo IP em janela curta"
+    severity = "Medium"
+    priority = "Medium"
+    mitre_attack_tactic = "Credential Access"
+    mitre_attack_technique = "T1110"
+
+  events:
+    $failed_login.metadata.event_type = "USER_LOGIN"
+    $failed_login.security_result.action = "BLOCK"
+    $failed_login.principal.ip = $ip
+
+  match:
+    $ip over 5m
+
+  condition:
+    #failed_login > 5
+}

@@ -1,0 +1,26 @@
+rule successful_login_after_brute_force {
+
+  meta:
+    author = "Fabiano Rodrigues Santana"
+    description = "Detecta login bem-sucedido logo após múltiplas falhas do mesmo IP - indício de brute force efetivo"
+    severity = "High"
+    priority = "High"
+    mitre_attack_tactic = "Credential Access, Initial Access"
+    mitre_attack_technique = "T1110"
+
+  events:
+    $fail.metadata.event_type = "USER_LOGIN"
+    $fail.security_result.action = "BLOCK"
+    $fail.principal.ip = $ip
+
+    $success.metadata.event_type = "USER_LOGIN"
+    $success.security_result.action = "ALLOW"
+    $success.principal.ip = $ip
+    $success.metadata.event_timestamp.seconds > $fail.metadata.event_timestamp.seconds
+
+  match:
+    $ip over 10m
+
+  condition:
+    #fail > 3 and #success >= 1
+}

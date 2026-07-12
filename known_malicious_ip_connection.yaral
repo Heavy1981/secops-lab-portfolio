@@ -1,0 +1,21 @@
+rule known_malicious_ip_connection {
+
+  meta:
+    author = "Fabiano Rodrigues Santana"
+    description = "Detecta conexão originada de IP presente na reference list de ameaças conhecidas"
+    severity = "High"
+    priority = "High"
+    mitre_attack_tactic = "Command and Control"
+    mitre_attack_technique = "T1071"
+
+  events:
+    $e.principal.ip = $ip
+    $ip in %known_malicious_ips
+
+  condition:
+    $e
+}
+
+// Reference list "known_malicious_ips" deve ser populada em
+// Detection Engine > Reference Lists, com IOCs de feeds de threat
+// intel (ex: AbuseIPDB) ou de investigações próprias de fraude.
